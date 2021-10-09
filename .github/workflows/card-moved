@@ -5,4 +5,6 @@
 login
 
 get_PROJs
-echo "$PROJs"
+echo "==>> $PROJs"
+
+api "repos/:owner/:repo/projects"
