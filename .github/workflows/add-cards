@@ -4,13 +4,13 @@ BATCH_SIZE=4
 
 # =============================================================================
 
-added=($(git diff-tree --no-commit-id --name-status -r HEAD | \
-           sed 's/^A\t\(hw[0-9]*\/[0-9]*\)\.rkt$/\1/' | grep '^hw[0-9]' | sort))
+# added=($(git diff-tree --no-commit-id --name-status -r HEAD | \
+#            sed 's/^A\t\(hw[0-9]*\/[0-9]*\)\.rkt$/\1/' | grep '^hw[0-9]' | sort))
 
-if [[ "${#added[@]}" == "0" ]]; then
-  echo "No HW files added"
-  exit
-fi
+# if [[ "${#added[@]}" == "0" ]]; then
+#   echo "No HW files added"
+#   exit
+# fi
 
 gh auth login --with-token <<<"$GH_TOKEN"
 
