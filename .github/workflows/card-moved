@@ -7,4 +7,4 @@ login
 get_PROJs
 echo "==>> $PROJs"
 
-api "repos/:owner/:repo/projects"
+api "repos/:owner/:repo/projects" | jq -r '.[] | @text "\(.name):\(.id)"'
