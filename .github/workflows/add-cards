@@ -24,6 +24,7 @@ col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
 
 
 echo "proj = $proj"
+echo "col = $col"
 exit
 
 
