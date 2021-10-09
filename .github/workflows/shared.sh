@@ -2,7 +2,8 @@ LOGGED_IN=0
 login() {
   if ((LOGGED_IN)); then return; fi
   echo "Logging into GH"
-  gh auth login --with-token <<<"$GH_TOKEN"
+  gh auth login --with-token <<<"$GH_TOKEN" | exit 1
+  LOGGED_IN=1
 }
 
 HDRS=()
