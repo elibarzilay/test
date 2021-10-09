@@ -5,10 +5,11 @@ BOARD="Test"
 ###############################################################################
 
 LOGGED_IN=0
+if [[ -n "$GH_TOKEN" ]]; then LOGGED_IN=1; fi
 login() {
   if ((LOGGED_IN)); then return; fi
   echo "Logging into GH"
-  # gh auth login --with-token <<<"$GH_TOKEN" | exit 1
+  gh auth login --with-token <<<"$GH_TOKEN" | exit 1
   LOGGED_IN=1
 }
 
