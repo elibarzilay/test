@@ -10,6 +10,10 @@ HDRS=()
 # HDRS=(-H "Accept:application/vnd.github.inertia-preview+json")
 api() { gh api "${HDRS[@]}" "$@"; }
 
+ctx() {
+  jq -r "$*" <<<"$GH_CTX"
+}
+
 PROJs=""
 get_PROJs() {
   if [[ -n "$PROJs" ]]; then return; fi
