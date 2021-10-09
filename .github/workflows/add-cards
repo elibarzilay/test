@@ -18,8 +18,7 @@ H=(-H "Accept:application/vnd.github.inertia-preview+json")
 api() { gh api "${H[@]}" "$@"; }
 
 proj="$(api "repos/:owner/:repo/projects" | jq -r '.[0].id')"
-col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
-         grep -i "^To ?do:")"
+col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"')"
 
 
 
