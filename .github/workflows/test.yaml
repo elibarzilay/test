@@ -1,0 +1,17 @@
+name: Add Cards
+
+on: { project_card: { types: [ moved ] } }
+
+jobs:
+  Cards:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with: { fetch-depth: 0 }
+    - run: |
+        echo " === env ==="
+        env
+        echo " === stdin ==="
+        cat
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
