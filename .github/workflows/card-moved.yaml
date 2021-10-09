@@ -13,4 +13,4 @@ jobs:
         env
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        FROM_ID: ${{ toJson(github.event.changes.column_id) }}
+        FROM_ID: ${{ toJson(github.event.cchanges.column_id.from) }}
