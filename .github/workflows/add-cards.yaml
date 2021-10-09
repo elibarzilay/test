@@ -1,0 +1,14 @@
+name: Add Cards
+
+on: { push: { branches: [ master ] },
+      workflow_dispatch }
+
+jobs:
+  Cards:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with: { fetch-depth: 0 }
+    - run: ./.github/workflows/add-cards
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}

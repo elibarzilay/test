@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+BATCH_SIZE=4
+
+# =============================================================================
+
+added=($(git diff-tree --no-commit-id --name-status -r HEAD | \
+           sed 's/^A\t\(hw[0-9]*\/[0-9]*\)\.rkt$/\1/' | grep '^hw[0-9]' | sort))
+
+if [[ "${#added[@]}" == "0" ]]; then
+  echo "No HW files added"
+  exit
+fi
+
+gh auth login --with-token <<<"$GH_TOKEN"
+
+H=(-H "Accept:application/vnd.github.inertia-preview+json")
+api() { gh api "${H[@]}" "$@"; }
+
+proj="$(api "repos/:owner/:repo/projects" | jq -r '.[0].id')"
+
+
+
+echo "proj = $proj"
+exit
+
+
+
+col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
+         grep "^Todo:")"
+col="${col##*:}"
+
+messages=()
+add() { messages+=("$1"); }
+create_all() {
+  for (( i=${#messages[@]}-1 ; i >= 0 ; i-- )) ; do
+    echo "  ${messages[i]}"
+    api "projects/columns/$col/cards" -f note="${messages[i]}" --silent
+  done
+}
+
+hws=($(printf "%s\n" "${added[@]%%/*}" | sort -u))
+for hw in "${hws[@]}"; do
+  files=($(printf "%s\n" "${added[@]#$hw/}" | grep -v "^hw"))
+  width="${#files[0]}"
+  for file in "${files[@]}"; do
+    if [[ "$width" != "${#file}" ]]; then width=""; break; fi
+  done
+  num="${#files[@]}" first="$((10#${files[0]}))" last="$((10#${files[-1]}))"
+  if [[ "${#files[@]}" -gt 1
+          && -n "$width"
+          && "$last" -eq "$(($first + $num - 1))" ]]; then
+    echo "==== $hw chunks ===="
+    for (( n = $first; n <= $last; n += $BATCH_SIZE )); do
+      m="$(($n + $BATCH_SIZE - 1))"
+      if [[ "$m" -gt "$last" ]]; then m="$last"; fi
+      if [[ "$n" -eq "$m" ]]; then add "$(printf "$hw/%0${width}d" "$n")"
+      else add "$(printf "$hw/%0${width}d...%0${width}d" "$n" "$m")"; fi
+    done
+  else
+    echo "==== $hw files ===="
+    for n in "${files[@]}"; do add "$hw/$n"; done
+  fi
+done
+
+create_all
