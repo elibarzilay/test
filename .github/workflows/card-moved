@@ -7,4 +7,4 @@ login
 get_PROJs
 echo "==>> $PROJs"
 
-ctx .
+ctx ".event.changes.column_id.from"
