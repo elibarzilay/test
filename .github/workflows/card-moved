@@ -6,7 +6,7 @@ login
 
 get_PROJs
 
-FROM_ID="$(ctx ".event.changes.column_id.from")"
-FROM="$(col "$FROM_ID")"
+FROM="$(col "$(ctx ".event.changes.column_id.from")")"
+TO="$(col "$(ctx ".event.project_card.column_id")")"
 
-echo "From $FROM"
+echo "Card move: $FROM -> $TO"
