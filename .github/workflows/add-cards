@@ -32,8 +32,8 @@ create_all() {
   done
 }
 
-add "Test 01"
-add "Test 02"
+add "Test 03"
+add "Test 04"
 create_all
 exit
 
