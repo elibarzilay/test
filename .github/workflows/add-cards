@@ -22,13 +22,6 @@ col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
          grep -Ei "^To ?do:")"
 col="${col##*:}"
 
-
-echo "proj = $proj"
-echo "col = $col"
-exit
-
-
-
 messages=()
 add() { messages+=("$1"); }
 create_all() {
@@ -37,6 +30,13 @@ create_all() {
     api "projects/columns/$col/cards" -f note="${messages[i]}" --silent
   done
 }
+
+add "Test 01"
+add "Test 02"
+create_all
+exit
+
+
 
 hws=($(printf "%s\n" "${added[@]%%/*}" | sort -u))
 for hw in "${hws[@]}"; do
