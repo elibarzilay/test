@@ -7,6 +7,6 @@ login
 get_PROJs
 
 FROM_ID="$(ctx ".event.changes.column_id.from")"
-FROM="$(id_name "$PROJs" "$FROM_ID")"
+FROM="$(col "$FROM_ID")"
 
 echo "From $FROM"

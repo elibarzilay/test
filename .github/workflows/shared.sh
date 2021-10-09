@@ -1,3 +1,9 @@
+###############################################################################
+
+BOARD="Test"
+
+###############################################################################
+
 LOGGED_IN=0
 login() {
   if ((LOGGED_IN)); then return; fi
@@ -33,7 +39,13 @@ get_PROJs() {
            jq -r '.[] | @text ":\(.name):\(.id):"')"
   PROJs="$LF$PROJs$LF"
 }
+proj() { get_PROJs; id_name "$PROJs" "$1"; }
 
-# col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
-#          grep -Ei "^To ?do:")"
-# col="${col##*:}"
+COLs=""
+get_COLs() {
+  get_PROJs
+  COLs="$(api "projects/$(proj "$BOARD")/columns" | \
+          jq -r '.[] | @text ":\(.name):\(.id):"')"
+  COLs="$LF$COLs$LF"
+}
+col() { get_COLs; id_name "$COLs" "$1"; }
