@@ -11,8 +11,6 @@ jobs:
     - run: |
         echo " === env ==="
         env
-        echo " === stdin ==="
-        cat
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        GITHUB_CONTEXT: ${{ toJson(github) }}
+        FROM_ID: ${{ toJson(github.event.changes.column_id) }}
