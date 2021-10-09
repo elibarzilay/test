@@ -8,9 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with: { fetch-depth: 0 }
-    - run: |
-        echo " === env ==="
-        env
+    - run: ./.github/workflows/card-moved
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         FROM_ID: ${{ toJson(github.event.changes.column_id.from) }}
