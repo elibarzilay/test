@@ -2,7 +2,6 @@
 
 . "$(dirname "$0")/shared.sh"
 
-echo 1
 login
-echo 2
-login
+
+proj_id
