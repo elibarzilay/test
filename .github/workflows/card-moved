@@ -5,6 +5,8 @@
 login
 
 get_PROJs
-echo "==>> $PROJs"
 
-ctx ".event.changes.column_id.from"
+FROM_ID="$(ctx ".event.changes.column_id.from")"
+FROM="$(id_name "$PROJs" "$FROM_ID")"
+
+echo "From $FROM"
