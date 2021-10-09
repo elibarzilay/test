@@ -10,13 +10,12 @@ HDRS=()
 # HDRS=(-H "Accept:application/vnd.github.inertia-preview+json")
 api() { gh api "${HDRS[@]}" "$@"; }
 
-PROJ_ID=""
-proj_id() {
-  if [[ -z "$PROJ_ID" ]]; then
-    login
-    PROJ_ID="$(api "repos/:owner/:repo/projects" | jq -r '.[0]')"
-  fi
-  echo "$PROJ_ID"
+PROJs=""
+get_PROJs() {
+  if [[ -n "$PROJs" ]]; then return; fi
+  login
+  PROJS="$(api "repos/:owner/:repo/projects" | \
+           jq -r '.[] | @text "\(.name):\(.id)"')"
 }
 
 # col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \

@@ -4,4 +4,5 @@
 
 login
 
-proj_id
+get_PROJs
+echo "$PROJs"
