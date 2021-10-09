@@ -14,8 +14,7 @@ PROJs=""
 get_PROJs() {
   if [[ -n "$PROJs" ]]; then return; fi
   login
-  PROJS="$(api "repos/:owner/:repo/projects" | \
-           jq -r '.[] | @text "\(.name):\(.id)"')"
+  PROJS="$(api "repos/:owner/:repo/projects"')"
 }
 
 # col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
