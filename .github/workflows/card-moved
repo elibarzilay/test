@@ -11,3 +11,5 @@ TO="$(col "$(ctx ".event.project_card.column_id")")"
 WHO="$(ctx ".event.sender.login")"
 
 echo "Card moved by @$WHO: $FROM -> $TO"
+
+ctx ".event.project_card.content_url"
