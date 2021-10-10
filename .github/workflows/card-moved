@@ -8,6 +8,10 @@ get_PROJs
 
 noop() { echo "Nothing to do ($*)"; exit 0; }
 
+echo "====="
+echo "$GH_CTX"
+echo "====="
+
 FROM_ID="$(ctx ".event.changes.column_id.from")"
 if [[ -z "$FROM" ]]; then noop "no FROM, probably order change"; fi
 
