@@ -27,7 +27,7 @@ elif [[ "$FROM" = "$COL3" && "$STATE" != "open" ]]; then
   gh issue reopen "$NUM"
 fi
 
-ASSIGNEE="$(jget "$content" .assignee)"
+ASSIGNEE="$(jget "$content" .assignee.login)"
 
 echo "assignee = $ASSIGNEE"
 
