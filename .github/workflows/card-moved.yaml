@@ -3,7 +3,7 @@ name: Card Moved
 on: { project_card: { types: [ moved ] } }
 
 jobs:
-  Update:
+  Updating:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

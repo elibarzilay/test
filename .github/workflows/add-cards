@@ -1,43 +1,25 @@
 #!/usr/bin/env bash
 
-BATCH_SIZE=4
+. "$(dirname "$0")/shared.sh"
 
-# =============================================================================
+added=($(git diff-tree --no-commit-id --name-status -r HEAD | \
+           sed 's/^A\t\(hw[0-9]*\/[0-9]*\)\.rkt$/\1/' | grep '^hw[0-9]' | sort))
 
-# added=($(git diff-tree --no-commit-id --name-status -r HEAD | \
-#            sed 's/^A\t\(hw[0-9]*\/[0-9]*\)\.rkt$/\1/' | grep '^hw[0-9]' | sort))
+if [[ "${#added[@]}" == "0" ]]; then noop "No HW files added"; fi
 
-# if [[ "${#added[@]}" == "0" ]]; then
-#   echo "No HW files added"
-#   exit
-# fi
-
-gh auth login --with-token <<<"$GH_TOKEN"
-
-H=(-H "Accept:application/vnd.github.inertia-preview+json")
-api() { gh api "${H[@]}" "$@"; }
-
-proj="$(api "repos/:owner/:repo/projects" | jq -r '.[0].id')"
-col="$(api "projects/$proj/columns" | jq -r '.[] | @text "\(.name):\(.id)"' | \
-         grep -Ei "^To ?do:")"
-col="${col##*:}"
+login
 
 messages=()
 add() { messages+=("$1"); }
 create_all() {
-  for (( i=${#messages[@]}-1 ; i >= 0 ; i-- )) ; do
-    echo "  ${messages[i]}"
-    # api "projects/columns/$col/cards" -f note="${messages[i]}" --silent
-    gh issue create -t "${messages[i]}" -b "" -p "Test"
+  for (( i = ${#messages[@]}-1 ; i >= 0 ; i-- )) ; do
+    local msg="${messages[i]}"
+    echo "  $msg"
+    cmd=(gh issue create -t "$msg" -b "" -p "Test")
+    if [[ "$msg" = */* ]]; then cmd+=(-l "${msg%%*/}"); fi
+    "${cmd[@]}"
   done
 }
-
-add "Test 03"
-add "Test 04"
-create_all
-exit
-
-
 
 hws=($(printf "%s\n" "${added[@]%%/*}" | sort -u))
 for hw in "${hws[@]}"; do

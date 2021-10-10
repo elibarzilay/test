@@ -2,13 +2,11 @@
 
 . "$(dirname "$0")/shared.sh"
 
-noop() { echo "Nothing to do ($*)"; exit 0; }
-
 login
 
 PROJ_ID="$(ctx ".event.project_card.project_url")"
 PROJ_ID="${PROJ_ID##*/}"
-echo ">>>" "$(proj "$PROJ_ID")" "$BOARD"
+if [[ "$(proj "$PROJ_ID")" != "$BOARD" ]]; then noop "unexpected PROJ_ID"; fi
 
 get_PROJs
 
@@ -37,25 +35,6 @@ fi
 ASSIGNEE="$(jget "$content" .assignee.login)"
 
 if [[ -z "$ASSIGNEE" ]]; then
+  echo "  Assigning $WHO" # the gh command has a bad output
   gh issue edit "$NUM" --add-assignee "$WHO"
 fi
-
-exit 0
-
-{{"url":"https://api.github.com/repos/elibarzilay/test/issues/67",
-  "events_url":"https://api.github.com/repos/elibarzilay/test/issues/67/events",
-  "html_url":"https://github.com/elibarzilay/test/issues/67",
-  "id":1021837952,
-  "node_id":"I_kwDOFuwB9M486AKA",
-  "number":67,
-  "title":"Test 03",
-  "labels":[],
-  "state":"open",
-  "locked":false,
-  "assignee":null,
-  "assignees":[],
-  "milestone":null,
-  "closed_at":null,
-  "body":null,
-  "closed_by":null,
- }}
