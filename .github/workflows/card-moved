@@ -8,6 +8,10 @@ get_PROJs
 
 noop() { echo "Nothing to do ($*)"; exit 0; }
 
+echo "====="
+echo "$GH_CTX"
+echo "====="
+
 FROM="$(col "$(ctx ".event.changes.column_id.from")")"
 TO="$(col "$(ctx ".event.project_card.column_id")")"
 WHO="$(ctx ".event.sender.login")"
