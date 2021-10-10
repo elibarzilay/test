@@ -30,7 +30,7 @@ fi
 ASSIGNEE="$(jget "$content" .assignee.login)"
 
 if [[ -z "$ASSIGNEE" ]]; then
-  gh issue edit "$NUM" --add-assignee "@me"
+  gh issue edit "$NUM" --add-assignee "$WHO"
 fi
 
 exit 0
