@@ -1,6 +1,9 @@
 ###############################################################################
 
 BOARD="Test"
+COL1="To do"
+COL2="In progress"
+COL3="Done"
 
 ###############################################################################
 
@@ -17,9 +20,8 @@ HDRS=()
 # HDRS=(-H "Accept:application/vnd.github.inertia-preview+json")
 api() { gh api "${HDRS[@]}" "$@"; }
 
-ctx() {
-  jq -r "$*" <<<"$GH_CTX"
-}
+jget() { json="$1"; shift; jq -r "$*" <<<"$json"; }
+ctx() { jget "$GH_CTX" "$@"; }
 
 LF=$'\n'
 # convert an id to a name or the other way
