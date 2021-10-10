@@ -8,10 +8,12 @@ get_PROJs
 
 noop() { echo "Nothing to do ($*)"; exit 0; }
 
-FROM="$(col "$(ctx ".event.changes.column_id.from")")"
+FROM_ID="$(ctx ".event.changes.column_id.from")"
+if [[ -z "$FROM" ]]; then noop "no FROM, probably order change"; fi
+
+FROM="$(col "$FROM_ID")"
 TO="$(col "$(ctx ".event.project_card.column_id")")"
 WHO="$(ctx ".event.sender.login")"
-if [[ -z "$FROM"      ]]; then noop "no FROM, probably order change"; fi
 if [[ "$FROM" = "$TO" ]]; then noop "FROM=TO"; fi
 
 content="$(ctx ".event.project_card.content_url")"
