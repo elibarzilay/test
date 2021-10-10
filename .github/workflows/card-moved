@@ -9,7 +9,7 @@ get_PROJs
 FROM="$(col "$(ctx ".event.changes.column_id.from")")"
 TO="$(col "$(ctx ".event.project_card.column_id")")"
 WHO="$(ctx ".event.sender.login")"
-if [[ "$FROM" = "$TO" ]]; then exit 0; done
+if [[ "$FROM" = "$TO" ]]; then exit 0; fi
 
 content="$(ctx ".event.project_card.content_url")"
 if [[ "$content" = "null" ]]; then exit 0; fi
