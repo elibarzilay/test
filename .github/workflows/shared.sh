@@ -37,6 +37,21 @@ id_name() { # table id-or-name
   fi
 }
 
+LABELs=""
+get_LABELs() {
+  if [[ -n "$LABELs" ]]; then return; fi
+  login
+  LABELs="$(gh api "/repos/{owner}/{repo}/labels" | \
+            jq -j '.[] | @text ":\(.name)"'):"
+}
+mk_label() {
+  get_LABELs
+  if [[ "$LABELs" = *:"$1":* ]]; then return; fi
+  echo "Creating label: $1"
+  LABELs=":$1$LABELs"
+  gh api "/repos/{owner}/{repo}/labels" -f name="$1"
+}
+
 PROJs=""
 get_PROJs() {
   if [[ -n "$PROJs" ]]; then return; fi
