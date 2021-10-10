@@ -29,7 +29,9 @@ fi
 
 ASSIGNEE="$(jget "$content" .assignee.login)"
 
-echo "assignee = $ASSIGNEE"
+if [[ -z "$ASSIGNEE" ]]; then
+  gh issue edit "$NUM" --add-assignee "@me"
+fi
 
 exit 0
 
