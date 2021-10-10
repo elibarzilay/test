@@ -12,4 +12,11 @@ WHO="$(ctx ".event.sender.login")"
 
 echo "Card moved by @$WHO: $FROM -> $TO"
 
-ctx ".event.project_card.content_url"
+content="$(ctx ".event.project_card.content_url")"
+if [[ "$content" = "null" ]]; then
+  content=""
+else
+  content="$(api "$content")"
+fi
+
+echo "{$content}"
