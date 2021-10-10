@@ -6,28 +6,30 @@ login
 
 get_PROJs
 
+noop() { echo "Nothing to do ($*)"; exit 0; }
+
 FROM="$(col "$(ctx ".event.changes.column_id.from")")"
 TO="$(col "$(ctx ".event.project_card.column_id")")"
 WHO="$(ctx ".event.sender.login")"
-if [[ "$FROM" = "$TO" ]]; then exit 0; fi
+if [[ "$FROM" = "$TO" ]]; then noop "FROM=TO"; fi
 
 content="$(ctx ".event.project_card.content_url")"
-if [[ "$content" = "null" ]]; then exit 0; fi
+if [[ "$content" = "null" ]]; then noop "not an issue"; fi
 content="$(api "$content")"
 NUM="$(jget "$content" .number)"
 
-echo "#$NUM card moved by @$WHO: $FROM -> $TO"
+echo "Card for #$NUM moved by @$WHO: $FROM -> $TO"
 
 STATE="$(jget "$content" .state)"
 if [[ "$TO" = "$COL3" && "$STATE" = "open" ]]; then
-  echo "  Closing"
   gh issue close "$NUM"
 elif [[ "$FROM" = "$COL3" && "$STATE" != "open" ]]; then
-  echo "  Re-openning"
   gh issue reopen "$NUM"
 fi
 
 ASSIGNEE="$(jget "$content" .assignee)"
+
+echo "assignee = $ASSIGNEE"
 
 exit 0
 

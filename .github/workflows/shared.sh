@@ -20,7 +20,7 @@ HDRS=()
 # HDRS=(-H "Accept:application/vnd.github.inertia-preview+json")
 api() { gh api "${HDRS[@]}" "$@"; }
 
-jget() { json="$1"; shift; jq -r "$*" <<<"$json"; }
+jget() { json="$1"; shift; jq -r "$* //empty" <<<"$json"; }
 ctx() { jget "$GH_CTX" "$@"; }
 
 LF=$'\n'
