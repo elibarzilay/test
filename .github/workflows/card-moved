@@ -13,7 +13,7 @@ echo "$GH_CTX"
 echo "====="
 
 FROM_ID="$(ctx ".event.changes.column_id.from")"
-if [[ -z "$FROM" ]]; then noop "no FROM, probably order change"; fi
+if [[ -z "$FROM_ID" ]]; then noop "no FROM, probably order change"; fi
 
 FROM="$(col "$FROM_ID")"
 TO="$(col "$(ctx ".event.project_card.column_id")")"
