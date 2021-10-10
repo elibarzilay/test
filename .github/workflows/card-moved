@@ -2,15 +2,15 @@
 
 . "$(dirname "$0")/shared.sh"
 
-login
-
-get_PROJs
-
 noop() { echo "Nothing to do ($*)"; exit 0; }
 
-echo "====="
-echo "$GH_CTX"
-echo "====="
+login
+
+PROJ_ID="$(ctx ".event.project_card.project_url")"
+PROJ_ID="${PROJ_ID##*/}"
+echo ">>>" "$(proj "$PROJ_ID")" "$BOARD"
+
+get_PROJs
 
 FROM_ID="$(ctx ".event.changes.column_id.from")"
 if [[ -z "$FROM_ID" ]]; then noop "no FROM, probably order change"; fi
