@@ -36,7 +36,9 @@ briefly explains everything that you need to know.
 > grading repository instead of a fork.)
 
 
-## Process overview and [the grading board](../../projects/1)
+## Process overview and [the grading board]
+
+[the grading board]: ../../projects/1
 
 The complete grading lifecycle goes as follows:
 * Students work on their homework and submit, which saves the files
@@ -44,7 +46,7 @@ The complete grading lifecycle goes as follows:
 * When the homework is closed, I sync all files into this repo.
 * A github action creates issues for each "batch" of files (batch size
   is configured in `.github/workflows/shared.sh`), with the intention of
-  graders grabing a batch to work on it.  The 
+  graders grabing a batch to work on it (using [the grading board]).
 
 
 ## Grading
