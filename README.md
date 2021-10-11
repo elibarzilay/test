@@ -1,3 +1,3 @@
 # test
 
-[foo](projects/1)
+[foo](../projects/1)
