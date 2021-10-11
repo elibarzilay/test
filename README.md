@@ -47,6 +47,23 @@ The complete grading lifecycle goes as follows:
 * A github action creates issues for each "batch" of files (batch size
   is configured in `.github/workflows/shared.sh`), with the intention of
   graders grabing a batch to work on it (using [the grading board]).
+* Optional: the head TA assigns each batch to a grader (but leaves it in
+  the "Todo" column).  Alternatively, don't do this to let graders pick
+  up batches in their own pace.
+* When a grader starts working on a batch, they drag the card to the "In
+  progress" column.  If the above assignment wasn't done, the action of
+  moving the card will auto-assign the issue to you.
+* When you're done grading, drag the card to the "Done" column, which
+  will mark the issue as closed.  (You can also close the issue, which
+  will move it to the "Done" column.)
+* When all gradings are done, the head TA does a "meta-pass".  The
+  purpose of this is to adjust & tweak the gradings so that they are as
+  consistent as possible.  When needed, issues can be dragged back to
+  the "In progress" (or "Todo") columns, which will re-open these
+  tickets (with the intention of fixing stuff by the grader).
+* When the meta-pass is done, I sync the graded files back to the handin
+  server, which makes them visible to students.
+* If/when there are later grading changes (see the "Regrading" section below) [Regrading and other fixes]
 
 
 ## Grading
