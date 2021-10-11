@@ -69,6 +69,30 @@ The complete grading lifecycle goes as follows:
 
 ### Working with [the grading board]
 
+Most of the workflow is done in [the grading board].  Issues appear
+there as cards, which can be dragged around the three columns.  There is
+some automation involved here:
+* dragging an unassigned issue will assign it to you,
+* dragging an issue to the "Done" column marks it as closed, and
+  dragging one back out will re-open the issue.
+
+Since [the grading board] is the main place for synchronizing the
+grading work, there are a few things that are worth doing:
+
+* Your profile picture and name will appear on issues that are assigned
+  to you.  It is therefore useful to make sure that you have a name that
+  identifies you and *some* picture (even if not a picture of yourself,
+  it's good to have something that is different from the default
+  pixel-map one) that people will associate with you.
+
+* Each issue creation and change will cause a notification to be sent to
+  you, and, depending on your GH settings, it might also send you an
+  email.  Since there's going to be many of these happening, and you'll
+  know about the work that you need to do anyway, you may want to ensure
+  that you're not "watching" the grading repository (i.e., change your
+  watch setting to "Participating and @mentions").
+
+
 ## Grading
 
 The grading directory will have one directory per homework, and then one
