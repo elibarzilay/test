@@ -100,7 +100,9 @@ grading work, there are a few things that are worth doing:
 Each issue is assigned a milestone for the corresponding homework, which
 is visible at the bottom of the cards.  Clicking a milestone will filter
 the view to cards for that homework only.  Also, you can see [a list of
-all milestones](../../milestones).
+all milestones](../../milestones).  When a homework is added to the
+repo, its milestone is created with a due date of one week, though that
+doesn't have much use in the github UI.
 
 
 ## Grading
