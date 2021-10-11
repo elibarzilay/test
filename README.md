@@ -61,8 +61,9 @@ The complete grading lifecycle goes as follows:
   consistent as possible.  When needed, issues can be dragged back to
   the "In progress" (or "Todo") columns, which will re-open these
   tickets (with the intention of fixing stuff by the grader).
-* When the meta-pass is done, I sync the graded files back to the handin
-  server, which makes them visible to students.
+* When the meta-pass is done, the cards can be removed from the board
+  (click the `…` and "Archive all cards").  I then sync the graded files
+  back to the handin server, which makes them visible to students.
 * If/when there are later grading changes (see the
   [Regrading section](#regrading-and-other-fixes) below), you just
   commit the changes, and I'll sync them to the handin server later.
@@ -75,6 +76,8 @@ some automation involved here:
 * dragging an unassigned issue will assign it to you,
 * dragging an issue to the "Done" column marks it as closed, and
   dragging one back out will re-open the issue.
+In addition, you can edit issues right on the board: just click an issue
+title and the issue will pop-up on the right.
 
 Since [the grading board] is the main place for synchronizing the
 grading work, there are a few things that are worth doing:

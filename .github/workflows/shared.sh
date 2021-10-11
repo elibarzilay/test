@@ -23,7 +23,7 @@ HDRS=()
 # HDRS=(-H "Accept:application/vnd.github.inertia-preview+json")
 api() { gh api "${HDRS[@]}" "$@"; }
 
-jget() { json="$1"; shift; jq -r "$* //empty" <<<"$json"; }
+jget() { json="$1"; shift; jq -r "$* // empty" <<<"$json"; }
 ctx() { jget "$GH_CTX" "$@"; }
 
 LF=$'\n'
@@ -42,7 +42,7 @@ get_LABELs() {
   if [[ -n "$LABELs" ]]; then return; fi
   login
   LABELs="$(gh api "/repos/{owner}/{repo}/labels" | \
-            jq -j '.[] | @text ":\(.name)"'):"
+            jq -j '.[] | @text ":\(.name // empty)"'):"
 }
 mk_label() {
   get_LABELs
@@ -50,6 +50,22 @@ mk_label() {
   echo "Creating label: $1"
   LABELs=":$1$LABELs"
   gh api "/repos/{owner}/{repo}/labels" -f name="$1"
+}
+
+MILESTONEs=""
+get_MILESTONEs() {
+  if [[ -n "$MILESTONEs" ]]; then return; fi
+  login
+  MILESTONEs="$(gh api "/repos/{owner}/{repo}/milestones" | \
+                jq -j '.[] | @text ":\(.title // empty)"'):"
+}
+mk_milestone() {
+  get_MILESTONEs
+  if [[ "$MILESTONEs" = *:"$1":* ]]; then return; fi
+  echo "Creating milestone: $1"
+  MILESTONEs=":$1$MILESTONEs"
+  gh api "/repos/{owner}/{repo}/milestones" -f title="$1" \
+     -f due_on="$(date -d "next week" +"%FT%TZ")"
 }
 
 PROJs=""
