@@ -95,6 +95,13 @@ grading work, there are a few things that are worth doing:
   that you're not "watching" the grading repository (i.e., change your
   watch setting to "Participating and @mentions").
 
+#### Additional features (useful for the head TA)
+
+Each issue is assigned a milestone for the corresponding homework, which
+is visible at the bottom of the cards.  Clicking a milestone will filter
+the view to cards for that homework only.  Also, you can see [a list of
+all milestones](../../milestones).
+
 
 ## Grading
 
