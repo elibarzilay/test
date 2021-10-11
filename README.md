@@ -63,7 +63,7 @@ The complete grading lifecycle goes as follows:
   tickets (with the intention of fixing stuff by the grader).
 * When the meta-pass is done, I sync the graded files back to the handin
   server, which makes them visible to students.
-* If/when there are later grading changes (see the "Regrading" section below) [Regrading and other fixes]
+* If/when there are later grading changes (see the "Regrading" section below)[Regrading and other fixes]
 
 
 ## Grading
