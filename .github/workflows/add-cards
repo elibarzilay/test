@@ -16,7 +16,9 @@ create_all() {
     local msg="${messages[i]}"
     echo "  $msg"
     cmd=(gh issue create -t "$msg" -b "" -p "Test")
-    if [[ "$msg" = */* ]]; then cmd+=(-m "${msg%%/*}"); fi
+    if [[ "$msg" = */* ]]; then
+      mk_milestone "${msg%%/*}"; cmd+=(-m "${msg%%/*}")
+    fi
     "${cmd[@]}"
   done
 }
