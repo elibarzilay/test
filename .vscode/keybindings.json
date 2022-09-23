@@ -1,0 +1,8 @@
+[
+  {
+    // does not work
+    "key": "f5", // "shift+f12",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Check Gradings"
+  }
+]

@@ -8,9 +8,6 @@
       "args": ["."],
       "options": {"cwd": "${fileDirname}"},
       "runOptions": {"instanceLimit": 1},
-      "problemMatcher": [
-        "$eslint-compact"
-      ],
       "presentation": {
         "reveal": "always",
         "clear": true,
@@ -21,6 +18,17 @@
       "group": {
         "kind": "build",
         "isDefault": true
+      },
+
+      "problemMatcher": {
+        "owner": "eli.barzilay.org",
+        "fileLocation": ["relative", "${fileDirname}"],
+        "pattern": {
+          "kind": "file",
+          "regexp": "^::error:: (.*) in (.*)$",
+          "file": 2,
+          "message": 1,
+        }
       }
     }
   ]
