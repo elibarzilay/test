@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "My Task",
+      "command": "echo hello",
+      "type": "shell",
+      //"args": ["1", "2"],
+      "problemMatcher": [
+        "$eslint-compact"
+      ],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    }
+  ]
+}
