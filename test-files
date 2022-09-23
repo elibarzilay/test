@@ -1,0 +1,101 @@
+#!/usr/bin/env racket
+;; -*- scheme -*-
+
+#lang racket/base
+
+(require racket/list racket/cmdline racket/sandbox)
+
+(define stdout (current-output-port))
+
+(define verbose? (make-parameter #f))
+
+(define (printff fmt . args)
+  (apply fprintf stdout fmt args) (flush-output stdout))
+
+(require (only-in pl/lang/utils test-report))
+(define (compile-tests file)
+  (define exprs
+    (call-with-input-file* file
+      (λ(in)
+        (printff "Reading tests from ~a..." file)
+        (port-count-lines! in)
+        (for/list ([x (in-producer (λ() (read-syntax file in)) eof)]) x))))
+  (printff " ~a test expressions.\n" (length exprs))
+  (define (exn->text e) (regexp-replace* #rx"\r?\n" (exn-message e) "\\\\n"))
+  (define (format-test-stx t)
+    (regexp-replace* #rx"(?m:^)" (format " ~a" (syntax->datum t)) "    "))
+  (λ(f)
+    (printff "Loading ~a..." f)
+    (define ev
+      (with-handlers ([exn? (λ(e) (printff "\n  *** ~a (~a)\n  *** Skipping!\n"
+                                           "Load failure" (exn->text e))
+                                  #f)])
+        (make-module-evaluator (string->path f))))
+    (when ev
+      (printff " Testing...")
+      (define failures 0)
+      (for ([t exprs] [i (in-naturals 1)])
+        (with-handlers ([exn? (λ(e) (when (zero? failures) (printff "\n"))
+                                    (printff "  (#~a) ~a\n" i (exn->text e))
+                                    (when (verbose?)
+                                      (printff "~a\n" (format-test-stx t)))
+                                    (set! failures (add1 failures)))])
+          (ev t)))
+      (if (zero? failures)
+        (printff " OK\n")
+        (printff "  -> ~a/~a failures\n" failures (length exprs))))))
+
+(define (run-tests tests files solution)
+  (define specs (sandbox-namespace-specs))
+  (parameterize ([error-print-context-length 0]
+                 [sandbox-memory-limit 500]
+                 [sandbox-eval-limits '(120 100)]
+                 [sandbox-output #f]
+                 [sandbox-error-output #f]
+                 [sandbox-namespace-specs
+                  ;; use the solution file to instantiate the right
+                  ;; language outside of the sandbox
+                  (if solution `(,(car specs) ,solution ,@(cdr specs)) specs)]
+                 [sandbox-path-permissions
+                  ;; allow reading "compiled" since it'll check it too;
+                  ;; it's harmless to allow reading all of it -- the
+                  ;; code was evaluated by the server without it anyway
+                  (if solution
+                    `([read ,solution] [read "compiled"]
+                      ;; (this hack is for my weird setup)
+                      ,@(let ([ph (getenv "PLTHOME")])
+                          (if (and ph (directory-exists? ph)) `([read ,ph])
+                              '()))
+                      ,@(sandbox-path-permissions))
+                    (sandbox-path-permissions))])
+    (define t (compile-tests tests))
+    (when solution (t solution))
+    (for-each t files)))
+
+(let ([tests-file "tests.rktl"] [solution-file "solution.rkt"])
+  (define (default-files)
+    (define fs
+      (filter-map (λ(f) (define name (path->string f))
+                        (and (regexp-match? #rx"[.]rkt$" name)
+                             (not (equal? name solution-file))
+                             name))
+                  (directory-list)))
+    (if (pair? fs)
+      (sort fs string<?)
+      (error "no files listed, and none found in this directory")))
+  (command-line
+   #:once-each
+   [("-t") tests "tests file (default: \"tests.rktl\")"
+    (set! tests-file tests)]
+   [("-s") solution "solution file (default: \"solution.rkt\", if it exists)"
+    (set! solution-file solution)]
+   [("-v") "enable verbose test failure output"
+    (verbose? #t)]
+   #:help-labels
+   "When no <files> are specified, test all files in this directory"
+   #:args files
+   (if (not (file-exists? tests-file))
+     (error 'test-files "missing test file: \"~a\"" tests-file)
+     (run-tests tests-file
+                (if (null? files) (default-files) files)
+                (and (file-exists? solution-file) solution-file)))))
