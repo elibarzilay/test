@@ -2,8 +2,10 @@
 
 shopt -s nullglob extglob
 
-if [[ "x$1" == "x--check-all" ]]; then
+if [[ "$1" == "--check-all" ]]; then
   paths=(hw+([0-9]))
+elif [[ "$#" -eq 1 && -d "$1" ]]; then
+  cd "$1"; shift; paths=(".")
 elif [[ "$#" -gt 0 ]]; then
   paths=("$@")
 else

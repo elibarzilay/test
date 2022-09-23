@@ -2,17 +2,26 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "My Task",
-      "command": "echo hello",
-      "type": "shell",
-      //"args": ["1", "2"],
+      "label": "Check Gradings",
+      "type": "process",
+      "command": "${workspaceFolder}/check-gradings",
+      "args": ["."],
+      "options": {"cwd": "${fileDirname}"},
+      "runOptions": {"instanceLimit": 1},
       "problemMatcher": [
         "$eslint-compact"
       ],
       "presentation": {
-        "reveal": "always"
+        "reveal": "always",
+        "clear": true,
+        "echo": false,
+        "panel": "shared",
+        "showReuseMessage": false,
       },
-      "group": "build"
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }
