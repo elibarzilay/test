@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+
+shopt -s nullglob extglob
+
+if [[ "x$1" == "x--check-all" ]]; then
+  paths=(hw+([0-9]))
+elif [[ "$#" -gt 0 ]]; then
+  paths=("$@")
+else
+  paths=(".")
+fi
+
+# =============================================================================
+
+required_gnu_exe() {
+  exe="$1" reqmaj="$2" reqmin="$3"
+  os="$(uname -s)"
+  failwith() {
+    echo "$*" 1>&2
+    if [[ "$os" = "Darwin" ]]; then
+      echo "You are running on a macos machine, consider installing some"
+      echo "utilities using brew:"
+      echo "1. To install brew: https://brew.sh/ (one-line command)"
+      echo "2. Install the GNU utilities that this script requires:"
+      echo "   brew install bash grep diffutils gnu-sed"
+      echo "Yes, I know that you're enjoying your shiny apple thing, and you"
+      echo "think that all of this command line nonsense is not for you --"
+      echo "but do yourself a favor: install these things and open your eyes."
+      echo "Just a bit."
+    fi 1>&2
+    exit 1
+  }
+  if [[ "$(type -t "$exe" 2>&1)" != "file" ]]; then
+    failwith "Missing executable: $exe"; fi
+  if [[ "$os" = "Darwin" && "$(type -t "g$exe")" = "file" ]]; then
+    printf -v "$exe" "%s" "$(type -P "g$exe")"
+  else
+    printf -v "$exe" "%s" "$(type -P "$exe")"
+  fi
+  ver="$("${!exe}" --version)"; ver="${ver%%$'\n'*}"
+  if [[ "$ver" != *"GNU"* ]]; then
+    echo "Required: a GNU version of $exe" 1>&2; exit 1; fi
+  i="${ver%%[0-9]*}"; i="${#i}"
+  maj="${ver:$i}"; maj="${maj%%[^0-9]*}"
+  (( i = i + 1 + ${#maj} ))
+  min="${ver:$i}"; min="${min%%[^0-9]*}"
+  bad_version() {
+    failwith "Bad version of ${!exe}: wanted $reqmaj.$reqmin, got $maj.$min"
+  }
+  if [[ "$maj" -lt "$reqmaj" ]]; then bad_version; fi
+  if [[ "$maj" -gt "$reqmaj" ]]; then return; fi
+  if [[ "$min" -lt "$reqmin" ]]; then bad_version; fi
+}
+
+required_gnu_exe bash 4 3
+required_gnu_exe grep 2 0
+required_gnu_exe diff 3 0
+required_gnu_exe sed  4 2
+
+# =============================================================================
+
+clean() { "$@" | "$sed" -e "s/ *;;*>.*//"; }
+
+bad_count=0
+bad() { # file message
+  ((bad_count++)); echo "::error:: $2 in $1"
+}
+
+nth() { # linenum file
+  "$sed" "$1q;d" "$2"
+}
+
+check_file() {
+  local hw="$1" start now
+  start="$(git log -1 --pretty=format:"%H" --diff-filter=A -- "./$hw")"
+  now="$(git log -1 --pretty=format:"%H" -- "./$hw")"
+  if [[ "$start" == "$now" ]]; then
+    :
+  elif [[ "$(nth 1 "$hw")" != ";;> Maximum points "* ]]; then
+    bad "$hw" "First line should be the \"Maximum points\" comment"
+  elif [[ "$(nth 2 "$hw")" != ";;> Graded by "* ]]; then
+    bad "$hw" "Second line should be the \"Graded by\" comment"
+  elif [[ "$(nth 3 "$hw")" != "" ]]; then
+    bad "$hw" "Third line should be empty to denote end of header part"
+  elif [[ "$(nth 4 "$hw")" = "" ]]; then
+    bad "$hw" "Fourth line and on should be the contents (no need for two empty lines)"
+  elif "$grep" -q $'\t' "$hw"; then
+    bad "$hw" "TAB character"
+    cat -n --show-tabs "$hw" | "$grep" -A 1 -B 1 "\\^I"
+  elif "$grep" -q ";>.*<[0-9][0-9]*>" "$hw"; then
+    bad "$hw" "probable grading comment typo"
+    cat -n "$hw" | "$grep" -A 1 -B 1 ";>.*<[0-9][0-9]*>"
+  elif ! "$diff" -Bq <(clean git show "$start:./$hw") <(clean cat "$hw") > /dev/null; then
+    bad "$hw" "content mismatch"
+    local args=(-B) DIFF Q="'"; local LF="%c$Q\\012$Q" C="%c$Q:$Q"
+    args+=(--old-line-format="-%.3dn| %L")
+    args+=(--new-line-format="+%.3dn| %L")
+    args+=(--unchanged-line-format=" %.3dn| %L")
+    args+=(--old-group-format="*** Deleted %(f=l?line$C %df:%dn lines$C %df-%dl)$LF%<")
+    args+=(--new-group-format="*** Added %(F=L?line$C %dF:%dN lines$C %dF-%dL)$LF%>")
+    args+=(--changed-group-format="*** Changed %(F=L?line$C %dF:%dN lines$C %dF-%dL)$LF%<%>")
+    args+=(--unchanged-group-format="%=")
+    DIFF="$( # the sed removes empty lines when they appear around changes
+      "$diff" "${args[@]}" <(clean git show "$start:./$hw") <(clean cat "$hw") \
+      | "$sed" -e 's/^.\([0-9]*| \)$/ \1/' \
+      | "$grep" -v "^ " --after-context=1 --before-context=1)"
+    DIFF="${DIFF//$'\n'+($'--\n')/$'\n...\n'}"
+    echo "$DIFF" | "$grep" '^[*]'
+    echo "$DIFF" | "$grep" '^[^*]'
+  fi
+}
+
+for path in "${paths[@]}"; do
+  echo "$path"
+  if [[ -d "$path" ]]; then
+    oIFS="$IFS" IFS=$'\n'
+    files=($(find "$path" -type f | "$grep" -E "(^|/)[0-9]+.*\\.rkt$" | sort))
+    IFS="$oIFS"
+    for file in "${files[@]}"; do
+      check_file "$file"
+    done
+  elif [[ -e "$path" ]]; then
+    check_file "$path"
+  fi
+done
+
+if [[ "$bad_count" -eq 0 ]]; then echo "All OK"; exit 0
+else echo "$bad_count problem files found!"; exit 1
+fi
