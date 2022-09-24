@@ -19,6 +19,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         result-encoding: string
         script: |
+          console.log(context);
           const response = await github.rest.pulls.get({
             owner: context.repo.owner,
             repo: context.repo.repo,
