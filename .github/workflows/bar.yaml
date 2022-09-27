@@ -13,8 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       zzz1: ${{ github.event.inputs.PR_number }}
+      zzz2: "${{ github.event.inputs.PR_number }}"
+      zzz3: '${{ github.event.inputs.PR_number }}'
+      zzz4: '"${{ github.event.inputs.PR_number }}"'
     steps:
     - name: Bar
       run: |
-        echo "${{ github.event.inputs.PR_number }}"
+        echo "zzz1: $zzz1"
+        echo "zzz2: $zzz2"
+        echo "zzz3: $zzz3"
+        echo "zzz4: $zzz4"
         env | sort
