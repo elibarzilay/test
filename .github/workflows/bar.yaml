@@ -1,4 +1,4 @@
-name: Foo
+name: Bar
 
 on:
   workflow_dispatch:
@@ -16,5 +16,5 @@ jobs:
     steps:
     - name: Bar
       run: |
-        echo ${{ github.event.inputs.PR_number }}
+        echo "${{ github.event.inputs.PR_number }}"
         env | sort
